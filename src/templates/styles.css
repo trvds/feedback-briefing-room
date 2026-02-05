@@ -1,0 +1,321 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  line-height: 1.6;
+  color: #333;
+  background: #f5f5f5;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Newsroom Styles */
+.newsroom-header {
+  border-bottom: 4px double #000;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.newsroom-header h1 {
+  font-size: 3em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.newsroom-date {
+  font-size: 0.9em;
+  color: #666;
+  font-style: italic;
+}
+
+.top-story {
+  border-left: 4px solid #d32f2f;
+  padding-left: 20px;
+  margin-bottom: 40px;
+}
+
+.top-story h2 {
+  font-size: 2em;
+  color: #d32f2f;
+  margin-bottom: 15px;
+}
+
+.top-story-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+}
+
+.section {
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #ddd;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.section-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  color: #000;
+  letter-spacing: 1px;
+}
+
+.section-intro {
+  font-size: 1em;
+  color: #555;
+  font-style: italic;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  padding-left: 5px;
+}
+
+.story-item {
+  margin-bottom: 25px;
+  padding: 15px;
+  background: #fafafa;
+  border-left: 3px solid #666;
+  transition: all 0.3s ease;
+}
+
+.story-item:hover {
+  background: #f0f0f0;
+  border-left-color: #d32f2f;
+  transform: translateX(5px);
+}
+
+.story-item h3 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.story-item p {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.story-meta {
+  font-size: 0.85em;
+  color: #888;
+  font-style: italic;
+}
+
+.open-case-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #000;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  letter-spacing: 1px;
+  transition: background 0.3s ease;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.open-case-btn:hover {
+  background: #d32f2f;
+}
+
+.under-radar-alert {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.under-radar-alert strong {
+  color: #856404;
+}
+
+/* Court Styles */
+.court-header {
+  text-align: center;
+  border-bottom: 4px double #000;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.court-header h1 {
+  font-size: 2.5em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.case-title {
+  font-size: 1.8em;
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #f5f5f5;
+  border: 2px solid #000;
+}
+
+.court-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.court-panel {
+  padding: 20px;
+  border: 2px solid #ddd;
+  background: #fafafa;
+}
+
+.court-panel h2 {
+  font-size: 1.5em;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #000;
+}
+
+.prosecution-panel {
+  border-color: #d32f2f;
+}
+
+.prosecution-panel h2 {
+  color: #d32f2f;
+}
+
+.defense-panel {
+  border-color: #1976d2;
+}
+
+.defense-panel h2 {
+  color: #1976d2;
+}
+
+.verdict-panel {
+  grid-column: 1 / -1;
+  padding: 25px;
+  background: #fff;
+  border: 3px solid #000;
+}
+
+.verdict-panel h2 {
+  font-size: 1.8em;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.verdict-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+}
+
+.urgency-badge {
+  display: inline-block;
+  padding: 5px 15px;
+  background: #000;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  margin: 10px 0;
+}
+
+.urgency-critical {
+  background: #d32f2f;
+}
+
+.urgency-high {
+  background: #f57c00;
+}
+
+.urgency-medium {
+  background: #fbc02d;
+  color: #000;
+}
+
+.urgency-low {
+  background: #388e3c;
+}
+
+.feedback-list {
+  list-style: none;
+  margin-top: 15px;
+}
+
+.feedback-list li {
+  padding: 10px;
+  margin-bottom: 10px;
+  background: white;
+  border-left: 3px solid #ccc;
+}
+
+.feedback-list li strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #000;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.back-link:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2em;
+  color: #666;
+}
+
+.error {
+  background: #ffebee;
+  border-left: 4px solid #d32f2f;
+  padding: 15px;
+  margin: 20px 0;
+  color: #c62828;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .newsroom-header h1 {
+    font-size: 2em;
+  }
+
+  .court-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .verdict-panel {
+    grid-column: 1;
+  }
+}

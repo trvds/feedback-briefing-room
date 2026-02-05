@@ -1,0 +1,20 @@
+{
+  "name": "feedback-briefing-room",
+  "version": "1.0.0",
+  "description": "The Feedback Journal - A three-layer feedback analysis tool",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply feedback-db",
+    "db:migrate:local": "wrangler d1 migrations apply feedback-db --local",
+    "db:create": "wrangler d1 create feedback-db",
+    "db:console": "wrangler d1 execute feedback-db --local",
+    "init:local": "curl -X POST http://localhost:8787/init"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241106.0",
+    "typescript": "^5.6.0",
+    "wrangler": "4.62.0"
+  }
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Court - Case Review</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="court-header">
+      <h1>⚖️ Feedback Court</h1>
+    </div>
+
+    <a href="/newsroom.html" class="back-link">← Back to Newsroom</a>
+
+    <div id="loading" class="loading">Loading case...</div>
+    <div id="error" class="error" style="display: none;"></div>
+
+    <div id="content" style="display: none;">
+      <div class="case-title" id="case-title">Case Title</div>
+
+      <div class="court-layout">
+        <!-- Prosecution Panel -->
+        <div class="court-panel prosecution-panel">
+          <h2>🔴 Prosecution</h2>
+          <div id="prosecution-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Defense Panel -->
+        <div class="court-panel defense-panel">
+          <h2>🔵 Defense</h2>
+          <div id="defense-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Verdict Panel -->
+        <div class="court-panel verdict-panel">
+          <h2>⚖️ Judge's Verdict (AI)</h2>
+          <div class="verdict-content" id="verdict-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Feedback -->
+      <div class="section">
+        <h2 class="section-title">📋 Related Feedback</h2>
+        <div id="related-feedback">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadCase() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const caseId = urlParams.get('case');
+
+        if (!caseId) {
+          throw new Error('No case ID provided');
+        }
+
+        const res = await fetch(`/api/cases/${caseId}`);
+        if (!res.ok) {
+          throw new Error('Case not found');
+        }
+
+        const data = await res.json();
+        const { case: caseData, feedback, prosecution, defense, verdict } = data;
+
+        // Set case title
+        document.getElementById('case-title').textContent = `Case: ${caseData.title}`;
+
+        // Render prosecution
+        document.getElementById('prosecution-content').innerHTML = `
+          <p><strong>Summary:</strong></p>
+          <p>${prosecution}</p>
+          <p><strong>Evidence:</strong></p>
+          <ul class="feedback-list">
+            ${feedback.filter(f => {
+          const content = f.content.toLowerCase();
+          return content.includes('urgent') || content.includes('critical') ||
+            content.includes('down') || content.includes('broken') ||
+            content.includes('blocked') || content.includes('error');
+        }).map(f => `
+              <li>
+                <strong>${f.source}</strong>
+                <p>${f.content}</p>
+                <div class="story-meta">${new Date(f.timestamp).toLocaleString()}</div>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+
+        // Render defense
+        document.getElementById('defense-content').innerHTML = `
+          <p>${defense}</p>
+          <p><strong>Counterpoints:</strong></p>
+          <ul>
+            <li>Total feedback volume: ${feedback.length} items</li>
+            <li>Most feedback from: ${feedback.length > 0 ? feedback[0].source : 'unknown'}</li>
+            <li>Consider: This might be expected behavior or user error</li>
+            <li>Documentation may already address this concern</li>
+          </ul>
+        `;
+
+        // Render verdict
+        const urgencyClass = `urgency-${verdict.urgency || 'medium'}`;
+        document.getElementById('verdict-content').innerHTML = `
+          <div class="urgency-badge ${urgencyClass}">${verdict.urgency || 'Medium'} Urgency</div>
+          <p><strong>Verdict:</strong></p>
+          <p>${verdict.verdict}</p>
+          <p><strong>Suggested Action:</strong></p>
+          <p>${verdict.suggestedAction}</p>
+        `;
+
+        // Render related feedback
+        document.getElementById('related-feedback').innerHTML = feedback.map(f => `
+          <div class="story-item">
+            <h3>${f.source}</h3>
+            <p>${f.content}</p>
+            <div class="story-meta">${new Date(f.timestamp).toLocaleString()}</div>
+          </div>
+        `).join('');
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+      } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').textContent = 'Error loading case: ' + error.message;
+      }
+    }
+
+    // Load case on page load
+    loadCase();
+  </script>
+</body>
+
+</html>

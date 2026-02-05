@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Feedback Briefing Room - Daily Edition</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="newsroom-header">
+      <h1>🗞️ The Product Feedback Briefing Room</h1>
+      <div class="newsroom-date" id="date"></div>
+    </div>
+
+    <div id="loading" class="loading">Loading today's briefing...</div>
+    <div id="error" class="error" style="display: none;"></div>
+
+    <div id="content" style="display: none;">
+      <!-- Top Story -->
+      <div class="top-story" id="top-story">
+        <h2>🔥 Top Story</h2>
+        <p class="section-intro">Today's most pressing matter requiring immediate editorial attention.</p>
+        <div class="top-story-content" id="top-story-content">
+          Loading...
+        </div>
+      </div>
+
+      <!-- Breaking Issues -->
+      <div class="section">
+        <h2 class="section-title">⚡ Breaking Issues</h2>
+        <p class="section-intro">Urgent dispatches reporting production incidents, system failures, and blocking issues.
+        </p>
+        <div id="breaking-issues">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Flying under the radar -->
+      <div class="section">
+        <h2 class="section-title">🛩️ Flying under the radar</h2>
+        <p class="section-intro">High-severity reports that might escape notice due to low volume but warrant
+          investigation.</p>
+        <div id="under-radar">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Developer Experience -->
+      <div class="section">
+        <h2 class="section-title">👨‍💻 Developer Experience</h2>
+        <p class="section-intro">Dispatches from the front lines: documentation gaps, error messages, and workflow
+          friction.</p>
+        <div id="developer-experience">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Pricing & Limits -->
+      <div class="section">
+        <h2 class="section-title">💰 Pricing & Limits</h2>
+        <p class="section-intro">Matters of economics: billing concerns, quotas, rate limits, and cost transparency.</p>
+        <div id="pricing-limits">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Things That Look Bad But Aren't -->
+      <div class="section">
+        <h2 class="section-title">✅ Things That Look Bad But Aren't</h2>
+        <p class="section-intro">False alarms that appeared alarming but prove to be display quirks or user
+          misunderstandings.</p>
+        <div id="false-alarms">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadBriefing() {
+      try {
+        // Fetch all feedback
+        const feedbackRes = await fetch('/api/feedback?limit=100');
+        const feedbackData = await feedbackRes.json();
+        const feedback = feedbackData.feedback || [];
+
+        // Fetch under radar flags
+        const underRadarRes = await fetch('/api/under-radar');
+        const underRadarData = await underRadarRes.json();
+        const underRadar = underRadarData.underRadar || [];
+
+        // Fetch cases
+        const casesRes = await fetch('/api/cases');
+        const casesData = await casesRes.json();
+        const cases = casesData.cases || [];
+
+        // Set date
+        document.getElementById('date').textContent = new Date().toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        // Categorize feedback
+        const breakingIssues = feedback.filter(f => {
+          const content = f.content.toLowerCase();
+          return content.includes('urgent') || content.includes('critical') ||
+            content.includes('down') || content.includes('broken') ||
+            content.includes('blocked') || content.includes('incident');
+        }).slice(0, 3);
+
+        const devExFeedback = feedback.filter(f => {
+          const content = f.content.toLowerCase();
+          return content.includes('developer') || content.includes('docs') ||
+            content.includes('documentation') || content.includes('experience') ||
+            content.includes('error message') || content.includes('debug');
+        }).slice(0, 3);
+
+        const pricingFeedback = feedback.filter(f => {
+          const content = f.content.toLowerCase();
+          return content.includes('pricing') || content.includes('price') ||
+            content.includes('bill') || content.includes('cost') ||
+            content.includes('limit') || content.includes('quota');
+        }).slice(0, 3);
+
+        const falseAlarms = feedback.filter(f => {
+          const content = f.content.toLowerCase();
+          return content.includes('look bad') || content.includes('display bug') ||
+            content.includes('not actually') || content.includes('false alarm');
+        }).slice(0, 2);
+
+        // Top story (most recent breaking issue or under radar)
+        const topStoryItem = breakingIssues[0] || underRadar[0]?.feedback || feedback[0];
+        if (topStoryItem) {
+          document.getElementById('top-story-content').innerHTML = `
+            <h3>${topStoryItem.content.substring(0, 100)}${topStoryItem.content.length > 100 ? '...' : ''}</h3>
+            <p>${topStoryItem.content}</p>
+            <div class="story-meta">Source: ${topStoryItem.source} • ${new Date(topStoryItem.timestamp).toLocaleString()}</div>
+            <button class="open-case-btn" onclick="openCase(${topStoryItem.id})">⚖️ Open the Case</button>
+          `;
+        }
+
+        // Render sections
+        renderSection('breaking-issues', breakingIssues);
+        renderUnderRadar('under-radar', underRadar);
+        renderSection('developer-experience', devExFeedback);
+        renderSection('pricing-limits', pricingFeedback);
+        renderSection('false-alarms', falseAlarms);
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+      } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').textContent = 'Error loading briefing: ' + error.message;
+      }
+    }
+
+    function renderSection(containerId, items) {
+      const container = document.getElementById(containerId);
+      if (items.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-style: italic;">No items in this section.</p>';
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+        <div class="story-item">
+          <h3>${item.content.substring(0, 80)}${item.content.length > 80 ? '...' : ''}</h3>
+          <p>${item.content}</p>
+          <div class="story-meta">Source: ${item.source} • ${new Date(item.timestamp).toLocaleString()}</div>
+          <button class="open-case-btn" onclick="openCase(${item.id})">⚖️ Open the Case</button>
+        </div>
+      `).join('');
+    }
+
+    function renderUnderRadar(containerId, underRadar) {
+      const container = document.getElementById(containerId);
+      if (underRadar.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-style: italic;">No items flying under the radar today.</p>';
+        return;
+      }
+
+      container.innerHTML = underRadar.slice(0, 5).map(flag => `
+        <div class="under-radar-alert">
+          <strong>⚠️ Flying under the radar:</strong>
+          <p>"${flag.feedback.content.substring(0, 100)}${flag.feedback.content.length > 100 ? '...' : ''}"</p>
+          <p><strong>Severity:</strong> ${flag.severity_score.toFixed(1)}/10</p>
+          <p><strong>Reason:</strong> ${flag.reason}</p>
+          <div class="story-meta">Source: ${flag.feedback.source} • ${new Date(flag.feedback.timestamp).toLocaleString()}</div>
+          <button class="open-case-btn" onclick="openCase(${flag.feedback.id})">⚖️ Open the Case</button>
+        </div>
+      `).join('');
+    }
+
+    function openCase(feedbackId) {
+      // Create a case and redirect to court view
+      fetch('/api/cases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: `Case for Feedback #${feedbackId}`,
+          feedbackIds: [feedbackId]
+        })
+      }).then(res => res.json())
+        .then(data => {
+          if (data.id) {
+            window.location.href = `/court.html?case=${data.id}`;
+          }
+        })
+        .catch(err => {
+          alert('Error creating case: ' + err.message);
+        });
+    }
+
+    // Load briefing on page load
+    loadBriefing();
+  </script>
+</body>
+
+</html>

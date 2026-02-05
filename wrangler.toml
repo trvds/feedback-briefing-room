@@ -1,0 +1,28 @@
+name = "feedback-briefing-room"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "feedback-db"
+database_id = "<DATABASE_ID"
+
+# Workers AI binding
+[ai]
+binding = "AI"
+
+# Cron: once per day at 08:00 UTC to generate the AI newspaper
+[triggers]
+crons = ["0 8 * * *"]
+
+# Workflows
+[[workflows]]
+name = "feedback-workflow"
+binding = "FEEDBACK_WORKFLOW"
+class_name = "FeedbackWorkflow"
+
+[[workflows]]
+name = "daily-newspaper-workflow"
+binding = "DAILY_NEWSPAPER_WORKFLOW"
+class_name = "DailyNewspaperWorkflow"
