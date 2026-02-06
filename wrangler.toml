@@ -28,4 +28,9 @@ binding = "DAILY_NEWSPAPER_WORKFLOW"
 class_name = "DailyNewspaperWorkflow"
 
 [observability]
-enabled = false
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[observability.traces]
+enabled = true
