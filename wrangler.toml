@@ -26,3 +26,6 @@ class_name = "FeedbackWorkflow"
 name = "daily-newspaper-workflow"
 binding = "DAILY_NEWSPAPER_WORKFLOW"
 class_name = "DailyNewspaperWorkflow"
+
+[observability]
+enabled = false
